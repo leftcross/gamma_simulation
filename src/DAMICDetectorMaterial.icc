@@ -1,0 +1,117 @@
+//
+// ********************************************************************
+// * License and Disclaimer                                           *
+// *                                                                  *
+// * The  Geant4 software  is  copyright of the Copyright Holders  of *
+// * the Geant4 Collaboration.  It is provided  under  the terms  and *
+// * conditions of the Geant4 Software License,  included in the file *
+// * LICENSE and available at  http://cern.ch/geant4/license .  These *
+// * include a list of copyright holders.                             *
+// *                                                                  *
+// * Neither the authors of this software system, nor their employing *
+// * institutes,nor the agencies providing financial support for this *
+// * work  make  any representation or  warranty, express or implied, *
+// * regarding  this  software system or assume any liability for its *
+// * use.  Please see the license in the file  LICENSE  and URL above *
+// * for the full disclaimer and the limitation of liability.         *
+// *                                                                  *
+// * This  code  implementation is the result of  the  scientific and *
+// * technical work of the GEANT4 collaboration.                      *
+// * By using,  copying,  modifying or  distributing the software (or *
+// * any work based  on the software)  you  agree  to acknowledge its *
+// * use  in  resulting  scientific  publications,  and indicate your *
+// * acceptance of all terms of the Geant4 Software license.          *
+// ********************************************************************
+//
+//
+// GEANT4 tag $Name:
+//
+// Author: M. Settimo
+//
+// History:
+// -----------
+//
+// 23rd November 2002 Modified to adapt to DAMIC - M.S.
+//
+  G4double density,      // density
+    a,                   // atomic mass
+    z;                   // atomic number
+  G4String name,         // name
+    symbol;              // symbol
+  G4int ncomponents,     // n components
+    iz,                  // number of protons
+    in;                  // number of nuceons
+  G4double abundance,    // abundance
+    temperature,         // temperature
+    pressure;            // pressure
+
+
+  G4Element* H = new G4Element(name="Hydrogen",symbol="H" , z= 1., a=1.00794*g/mole);
+  G4Element* Ca = new G4Element(name="Calcium",symbol="Ca" , z= 20., a=40.078*g/mole);
+  G4Element* O  = new G4Element(name="Oxygen"  ,symbol="O" , z= 8., a=16.00*g/mole);	
+  G4Element* Si = new G4Element(name="Silicon",symbol="Si" , z= 14., a=28.09*g/mole);
+  G4Element* N = new G4Element(name="Nitrogen",symbol="N" , z= 7., a=14.00674*g/mole);
+  G4Element* Al = new G4Element(name="Aluminium"  ,symbol="Al" , z= 13., a=26.98*g/mole);
+  G4Element* Fe = new G4Element(name="Iron"  ,symbol="Fe" , z= 26., a=55.85*g/mole);
+  G4Element* C  = new G4Element(name="Carbon", "C",   6. , 12.011*g/mole);
+  G4Element* Co = new G4Element(name="Cobalt", "Co", 27. , 58.9332*g/mole);
+  G4Element* Cu = new G4Element(name="Copper"  ,symbol="Cu" , z= 29., a=63.55*g/mole);
+  G4Element* Pb = new G4Element(name="Lead",symbol="Pb" , z= 82., a=207.2*g/mole);
+ // G4Element* Hbis = new G4Element("TS_H_of_Polyethylene", "Hbis", 1., 1.0079*g/mole);
+  
+  // making vacuum
+  G4Material* Vacuum = new G4Material 
+    (name="Vacuum", z=1., a=1.*g/mole, density=1.e-20*g/cm3,
+     kStateGas, temperature=0.1*kelvin, pressure=1.e-20*bar);
+
+  //making poly
+  G4Material* Poly = new G4Material ("Poly", 0.96*g/cm3, ncomponents=2);
+ // Poly->AddElement(C, 0.333);//natoms=2);
+ //Poly->AddElement(Hbis, 0.667);//natoms=4);
+  Poly->AddElement(C, 0.856);
+  Poly->AddElement(H, 0.144);
+
+ // air
+  G4Material* Air = new G4Material
+    ("Air", 1.2929*kg/m3, 2, kStateGas, 300.00*kelvin, 1.0*atmosphere);
+  Air->AddElement(N, 0.8);
+  Air->AddElement(O , 0.2);
+
+
+  // liquid nitrogen:
+  G4Material* LN2 = new G4Material("LN2", 0.8*g/cm3, 1, kStateLiquid, 77.*kelvin, 1.0*atmosphere);
+  LN2->AddElement(N, 1);
+
+  //concrete
+    
+  G4Material* concrete = new G4Material(name="concrete", density=2.3*g/cm3, ncomponents=6);
+  concrete->AddElement(Si, 0.227915);
+  concrete->AddElement(O, 0.60541);
+  concrete->AddElement(H, 0.09972);
+  concrete->AddElement(Ca, 0.04986);
+  concrete->AddElement(Al, 0.014245);
+  concrete->AddElement(Fe, 0.00285);
+
+
+  G4NistManager* nist = G4NistManager::Instance();
+
+  WorldMat = nist->FindOrBuildMaterial("concrete");
+  VacuumMat = nist->FindOrBuildMaterial("Vacuum");		
+  LabMat = nist->FindOrBuildMaterial("Air");	
+  CopperMat = nist->FindOrBuildMaterial("G4_Cu");
+  LeadMat = nist->FindOrBuildMaterial("G4_Pb");
+  AluminiumMat = nist->FindOrBuildMaterial("G4_Al");
+  SiliconMat = nist->FindOrBuildMaterial("G4_Si");
+  GalacticMat = nist->FindOrBuildMaterial("G4_Galactic");
+  StainSteelMat = nist->FindOrBuildMaterial("G4_STAINLESS-STEEL");
+  PolyMat = nist->FindOrBuildMaterial("Poly");	
+  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+
+/*
+  // aluminium
+  G4Element* Al = new G4Element
+    (name="Aluminium"  ,symbol="Al" , z= 13., a=26.98*g/mole);  
+  G4Material* metalAl = new G4Material
+    (name="MetalAluminium", density=2.700*g/cm3, ncomponents=1);
+  metalAl->AddElement(Al, 1);
+*/

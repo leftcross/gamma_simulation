@@ -1,0 +1,54 @@
+###############################################################################
+#                                                                             #
+# muon.mac                                                                   #
+# Single muon from internal calibrator                                      #
+# output in file hits.out                                                     #
+#                                                                             #
+###############################################################################
+#
+# verbosities
+/control/verbose 0
+/run/verbose 0
+/tracking/verbose 0
+#/hits/verbose 0
+#
+
+/random/setSeeds 30228 17649
+
+# draw flags
+#/damic/draw/drawColours custom
+#/damic/draw/gammaColour yellow
+#/damic/draw/drawTracks all
+#/damic/draw/drawHits 1
+#
+# file output
+/damic/saveHits 0
+#
+# gun: particle
+
+/damic/gun/verbose 0
+#/damic/gun/position 0cm  0cm 200 cm
+/damic/gun/energytype Muon
+#/damic/gun/energy 1
+/damic/gun/particle  mu-
+/damic/gun/depth    6.01 km
+# gun: distribution
+/damic/gun/angtype Muon
+
+
+# gun: source
+/damic/gun/type Volume
+/damic/gun/shape Cube
+/damic/gun/halfx  100 cm
+/damic/gun/halfy  100 cm
+/damic/gun/halfz  1 cm
+/damic/gun/centre 0 0 200 cm
+
+#
+/random/setSeeds 30228 17649
+
+# 
+#/damic/hitsfile muon_5.out
+/damic/histogramfile /home/shobhit/underground_sims/build/muon_cosmic_1
+#
+/run/beamOn 2000

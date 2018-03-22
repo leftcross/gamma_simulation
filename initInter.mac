@@ -1,0 +1,45 @@
+#############################################################################*#
+#                                                                             #
+# initInter.mac                                                               #
+# Initialisation macro for interactive mode                                   #
+#                                                                             #
+###############################################################################
+
+/control/verbose 2
+/control/saveHistory
+/control/macroPath /home/shobhit/underground_sims/build/
+
+/geometry/test/run
+
+#Visual commands
+/vis/open OGL
+/vis/drawVolume
+/vis/viewer/set/autoRefresh true
+/vis/viewer/zoom 1.5
+/vis/viewer/set/viewpointThetaPhi 90 0
+# If autorefresh is off, next command will refresh all the changes made to the viewer
+# In the case of DAWNFILE, unless you un-comment the next line, you won't see any output
+#/vis/viewer/refresh
+
+#Just in case you want to switch to the stupid default view
+#/vis/viewer/reset
+
+#To enable trajectory and hits storage
+/vis/scene/add/trajectories
+/vis/scene/add/hits
+
+#With this command the entire detector will be opaque, unlike the default wire-like view
+#/vis/viewer/set/style surface
+
+#The default style
+#/vis/viewer/set/style wireframe
+
+#Move the centre to a certain point/ by a certain amount
+#/vis/viewer/panTo -5 -1
+
+#To accumulate all the events
+#/vis/scene/endOfEventAction accumulate
+
+
+#For increasing the display limit, currently set at 50000
+/vis/ogl/set/displayListLimit 150000

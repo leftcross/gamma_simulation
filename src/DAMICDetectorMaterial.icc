@@ -92,6 +92,13 @@
   concrete->AddElement(Al, 0.014245);
   concrete->AddElement(Fe, 0.00285);
 
+  // wood
+  G4Material* wood = new G4Material
+    (name="wood", density=0.9*g/cm3, ncomponents=3);
+  wood->AddElement(H , 4);
+  wood->AddElement(O , 1);
+  wood->AddElement(C , 2);
+
 
   G4NistManager* nist = G4NistManager::Instance();
 
@@ -106,7 +113,7 @@
   StainSteelMat = nist->FindOrBuildMaterial("G4_STAINLESS-STEEL");
   PolyMat = nist->FindOrBuildMaterial("Poly");	
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
-
+  TableMat= nist->FindOrBuildMaterial("wood");  
 /*
   // aluminium
   G4Element* Al = new G4Element

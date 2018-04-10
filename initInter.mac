@@ -38,8 +38,8 @@
 #/vis/viewer/panTo -5 -1
 
 #To accumulate all the events
-#/vis/scene/endOfEventAction accumulate
+/vis/scene/endOfEventAction accumulate
 
 
 #For increasing the display limit, currently set at 50000
-/vis/ogl/set/displayListLimit 150000
+/vis/ogl/set/displayListLimit 4050000

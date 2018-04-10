@@ -229,7 +229,7 @@ DAMICParticleSourceMessenger::DAMICParticleSourceMessenger
   energytypeCmd->SetGuidance("Possible variables are: Mono Muon Uniform");
   energytypeCmd->SetParameterName("EnergyDis",true,true);
   energytypeCmd->SetDefaultValue("Mono");
-  energytypeCmd->SetCandidates("Mono Muon Uniform");
+  energytypeCmd->SetCandidates("Mono CF252 Uniform");
 
   // verbosity
   verbosityCmd = new G4UIcmdWithAnInteger("/damic/gun/verbose",this);

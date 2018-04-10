@@ -115,6 +115,7 @@ void DAMICSteppingAction::UserSteppingAction(const G4Step* fStep)
     stepNsec  = fStep->GetSecondary()->size();
   else stepNsec=-1;
 
+
   G4String CreatorProcess = "";
   if (fStep->GetTrack()->GetCreatorProcess()!=0)
      CreatorProcess = fStep->GetTrack()->GetCreatorProcess()->GetProcessName();
@@ -191,9 +192,9 @@ void DAMICSteppingAction::UserSteppingAction(const G4Step* fStep)
 		}
 	}
 
-//if(  (Volume == "extPolyBoxLV") && ((NextVolume == "WorldPV")||(NextVolume =="LabPV"))&&(StoreNeutron==1)  ) {
-//  if( NextVolume == "extLeadBoxPV") {  
-    if(StoreNeutron==1) {  
+//if(  (Volume == "extBonnerSphereLV") && ((NextVolume == "emptyLeadBoxPV")||(NextVolume =="extLeadBoxPV")) ) {
+  if( NextVolume == "CCDPV") {  
+   // if(StoreNeutron==1) {  
     G4AnalysisManager* man = G4AnalysisManager::Instance();
     man->FillNtupleIColumn(0,0,event_id);
     man->FillNtupleDColumn(0,1,energy_pri/CLHEP::keV);

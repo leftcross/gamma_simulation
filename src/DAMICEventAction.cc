@@ -157,8 +157,8 @@ void DAMICEventAction::BeginOfEventAction(const G4Event* evt)
   // get ID for scintillator hits collection
   
   if (ccdCollID==-1) {
-    G4SDManager *SDman = G4SDManager::GetSDMpointer();
-    ccdCollID = SDman->GetCollectionID("ccdCollection");
+    // G4SDManager *SDman = G4SDManager::GetSDMpointer();
+    // ccdCollID = SDman->GetCollectionID("ccdCollection");
   }
 
 }
@@ -168,51 +168,51 @@ void DAMICEventAction::BeginOfEventAction(const G4Event* evt)
 void DAMICEventAction::EndOfEventAction(const G4Event* evt) {
   G4cout << " in endOfeventAction " << G4endl; 
   // check that both hits collections have been defined
-  if(ccdCollID<0) { G4cout << " ccdColID < 0. break" << G4endl; return;}
+  // if(ccdCollID<0) { G4cout << " ccdColID < 0. break" << G4endl; return;}
 
-  G4AnalysisManager* man = G4AnalysisManager::Instance();
+  // G4AnalysisManager* man = G4AnalysisManager::Instance();
 
-  // address hits collections
-  DAMICSiHitsCollection* SHC = NULL;
-  G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
-  if(HCE) {
-    SHC = (DAMICSiHitsCollection*)(HCE->GetHC(ccdCollID));
-  }
+  // // address hits collections
+  // DAMICSiHitsCollection* SHC = NULL;
+  // G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
+  // if(HCE) {
+  //   SHC = (DAMICSiHitsCollection*)(HCE->GetHC(ccdCollID));
+  // }
 
-  // event summary
-  totEnergy         = 0.;
-  totEnergyGammas   = 0.;
-  totEnergyNeutrons = 0.;
-  firstParticleE    = 0.;
-  particleEnergy    = 0.;
-  firstHitTime      = 0.;
-  firstTrackID      = 0;
-  firstStepID       = 0;
-  firstParticleName = "";
-  particleName      = "";
+  // // event summary
+  // totEnergy         = 0.;
+  // totEnergyGammas   = 0.;
+  // totEnergyNeutrons = 0.;
+  // firstParticleE    = 0.;
+  // particleEnergy    = 0.;
+  // firstHitTime      = 0.;
+  // firstTrackID      = 0;
+  // firstStepID       = 0;
+  // firstParticleName = "";
+  // particleName      = "";
 
 
-  // particle flags
-  gamma_ev          = false;
-  neutron_ev        = false;
-  positron_ev       = false;
-  electron_ev       = false;
-  proton_ev         = false;
-  other_ev          = false;
-  start_gamma       = false;
-  start_neutron     = false;
+  // // particle flags
+  // gamma_ev          = false;
+  // neutron_ev        = false;
+  // positron_ev       = false;
+  // electron_ev       = false;
+  // proton_ev         = false;
+  // other_ev          = false;
+  // start_gamma       = false;
+  // start_neutron     = false;
 
-  // write out event summary
-  if(saveHitsFlag)  
-    writeSiHitsToFile();
+  // // write out event summary
+  // if(saveHitsFlag)  
+  //   writeSiHitsToFile();
     
-  // draw trajectories
-  if(drawColsFlag=="standard" && drawTrksFlag!="none")
-    drawTracks(evt);
+  // // draw trajectories
+  // if(drawColsFlag=="standard" && drawTrksFlag!="none")
+  //   drawTracks(evt);
 
-  // print this event by event (modulo n)  	
-  if (event_id%printModulo == 0) 
-    G4cout << "\n---> End of event: " << event_id << G4endl << G4endl;	
+  // // print this event by event (modulo n)  	
+  // if (event_id%printModulo == 0) 
+     G4cout << "\n---> End of event: " << event_id << G4endl << G4endl;	
 
 }
 
@@ -221,109 +221,109 @@ void DAMICEventAction::EndOfEventAction(const G4Event* evt) {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 void DAMICEventAction::writeSiHitsToFile() 
 {
-  G4cout << " test " << G4endl << G4endl; 
-  G4String filename="hits.out";
-  if (runAct)
-    filename=runAct->GetsavehitsFile();
+//   G4cout << " test " << G4endl << G4endl; 
+//   G4String filename="hits.out";
+//   if (runAct)
+//     filename=runAct->GetsavehitsFile();
 
  
   
-  //First time it is inkoved
-  if (!hitsfile)
-    {
-      //check that we are in a worker: returns -1 in a master and -2 in sequential
-      //one file per thread is produced ending with ".N", with N= thread number
-      if (G4Threading::G4GetThreadId() >= 0)
-	{
-	  std::stringstream sss;
-	  sss << filename.c_str() << "." << G4Threading::G4GetThreadId();	 
-	  filename = sss.str();
-	  //G4cout << "Filename is: " << filename << G4endl;
-	}
+//   //First time it is inkoved
+//   if (!hitsfile)
+//     {
+//       //check that we are in a worker: returns -1 in a master and -2 in sequential
+//       //one file per thread is produced ending with ".N", with N= thread number
+//       if (G4Threading::G4GetThreadId() >= 0)
+// 	{
+// 	  std::stringstream sss;
+// 	  sss << filename.c_str() << "." << G4Threading::G4GetThreadId();	 
+// 	  filename = sss.str();
+// 	  //G4cout << "Filename is: " << filename << G4endl;
+// 	}
       
-      hitsfile = new std::ofstream;
-      hitsfile->open(filename);
-      (*hitsfile) <<"Evt     Eprim   Etot    LXe     LXeTime   ddd  Time Seed1           Seed2           First   Flags" 
-	       << G4endl;
-      (*hitsfile) <<"#       MeV     MeV     hits    ns      hits    ns                                      hit"
-	       << G4endl
-	       << G4endl;
-    }//end if !hist
+//       hitsfile = new std::ofstream;
+//       hitsfile->open(filename);
+//       (*hitsfile) <<"Evt     Eprim   Etot    LXe     LXeTime   ddd  Time Seed1           Seed2           First   Flags" 
+// 	       << G4endl;
+//       (*hitsfile) <<"#       MeV     MeV     hits    ns      hits    ns                                      hit"
+// 	       << G4endl
+// 	       << G4endl;
+//     }//end if !hist
 
-G4AnalysisManager* man = G4AnalysisManager::Instance();
-  if(S_hits) {
+// G4AnalysisManager* man = G4AnalysisManager::Instance();
+//   if(S_hits) {
 
-    if(hitsfile->is_open()) {
+//     if(hitsfile->is_open()) {
 
 
-      (*hitsfile) << std::setiosflags(std::ios::fixed)
-		  << std::setprecision(4)
-		  << std::setiosflags(std::ios::left)
-		  << std::setw(6)
-		  << event_id << "\t"
-		  << energy_pri/MeV << "\t" 
-		  << totEnergy/MeV << "\t"
-		  << S_hits  << "\t"
-		  << std::setiosflags(std::ios::scientific) 
-		  << std::setprecision(2)
-		  << firstHitTime/nanosecond << "\t"
-		  << P_hits << "\t"
-		  << std::setiosflags(std::ios::fixed) 
-		  << std::setprecision(4)
-		  << *seeds     << "\t"
-		  << *(seeds+1) << "\t"
-		  << firstParticleName << "\t"
-		  << (gamma_ev    ? "gamma " : "") 
-		  << (neutron_ev  ? "neutron " : "") 
-		  << (positron_ev ? "positron " : "") 
-		  << (electron_ev ? "electron " : "") 
-		  << (other_ev    ? "other " : "") 
-		  << G4endl;
+//       (*hitsfile) << std::setiosflags(std::ios::fixed)
+// 		  << std::setprecision(4)
+// 		  << std::setiosflags(std::ios::left)
+// 		  << std::setw(6)
+// 		  << event_id << "\t"
+// 		  << energy_pri/MeV << "\t" 
+// 		  << totEnergy/MeV << "\t"
+// 		  << S_hits  << "\t"
+// 		  << std::setiosflags(std::ios::scientific) 
+// 		  << std::setprecision(2)
+// 		  << firstHitTime/nanosecond << "\t"
+// 		  << P_hits << "\t"
+// 		  << std::setiosflags(std::ios::fixed) 
+// 		  << std::setprecision(4)
+// 		  << *seeds     << "\t"
+// 		  << *(seeds+1) << "\t"
+// 		  << firstParticleName << "\t"
+// 		  << (gamma_ev    ? "gamma " : "") 
+// 		  << (neutron_ev  ? "neutron " : "") 
+// 		  << (positron_ev ? "positron " : "") 
+// 		  << (electron_ev ? "electron " : "") 
+// 		  << (other_ev    ? "other " : "") 
+// 		  << G4endl;
 
-      if (event_id%printModulo == 0)
-	G4cout << "     Event summary in file " << filename << G4endl;  
-    }//end hitsfile open
+//       if (event_id%printModulo == 0)
+// 	G4cout << "     Event summary in file " << filename << G4endl;  
+//     }//end hitsfile open
 
-    // G4AnalysisManager* man = G4AnalysisManager::Instance();
-    G4int firstparticleIndex = 0;
-    if(firstParticleName == "gamma") firstparticleIndex = 1;
-    else if (firstParticleName == "neutron") firstparticleIndex = 2;
-    else if(firstParticleName == "electron") firstparticleIndex = 3;
-    else if(firstParticleName == "positron") firstparticleIndex = 4;
-    else{
-      firstparticleIndex = 5;
-      man->FillH1(3,totEnergy);
-    }
+//     // G4AnalysisManager* man = G4AnalysisManager::Instance();
+//     G4int firstparticleIndex = 0;
+//     if(firstParticleName == "gamma") firstparticleIndex = 1;
+//     else if (firstParticleName == "neutron") firstparticleIndex = 2;
+//     else if(firstParticleName == "electron") firstparticleIndex = 3;
+//     else if(firstParticleName == "positron") firstparticleIndex = 4;
+//     else{
+//       firstparticleIndex = 5;
+//       man->FillH1(3,totEnergy);
+//     }
 
-    man->FillH1(4,P_hits,10); //weight
-    man->FillH1(5,P_hits);
+//     man->FillH1(4,P_hits,10); //weight
+//     man->FillH1(5,P_hits);
 
-    man->FillH1(1,energy_pri/keV);
-    man->FillH1(2,totEnergy/keV);
+//     man->FillH1(1,energy_pri/keV);
+//     man->FillH1(2,totEnergy/keV);
 
-    long seed1 = *seeds;
-    long seed2 = *(seeds+1);
+//     long seed1 = *seeds;
+//     long seed2 = *(seeds+1);
 
     
-    //Fill ntuple #2
-    man->FillNtupleDColumn(2,0,event_id);
-    man->FillNtupleDColumn(2,1,energy_pri/keV);
-    man->FillNtupleDColumn(2,2,totEnergy);
-    man->FillNtupleDColumn(2,3,S_hits);
-    man->FillNtupleDColumn(2,4,firstHitTime);
-    man->FillNtupleDColumn(2,5,P_hits);
-    man->FillNtupleDColumn(2,7,firstparticleIndex);
-    man->FillNtupleDColumn(2,8,firstParticleE);
-    man->FillNtupleDColumn(2,9,gamma_ev);
-    man->FillNtupleDColumn(2,10,neutron_ev);
-    man->FillNtupleDColumn(2,11,positron_ev);
-    man->FillNtupleDColumn(2,12,electron_ev);
-    man->FillNtupleDColumn(2,13,other_ev);
-    man->FillNtupleDColumn(2,14,seed1);
-    man->FillNtupleDColumn(2,15,seed2);
-    man->AddNtupleRow(2);
+//     //Fill ntuple #2
+//     man->FillNtupleDColumn(2,0,event_id);
+//     man->FillNtupleDColumn(2,1,energy_pri/keV);
+//     man->FillNtupleDColumn(2,2,totEnergy);
+//     man->FillNtupleDColumn(2,3,S_hits);
+//     man->FillNtupleDColumn(2,4,firstHitTime);
+//     man->FillNtupleDColumn(2,5,P_hits);
+//     man->FillNtupleDColumn(2,7,firstparticleIndex);
+//     man->FillNtupleDColumn(2,8,firstParticleE);
+//     man->FillNtupleDColumn(2,9,gamma_ev);
+//     man->FillNtupleDColumn(2,10,neutron_ev);
+//     man->FillNtupleDColumn(2,11,positron_ev);
+//     man->FillNtupleDColumn(2,12,electron_ev);
+//     man->FillNtupleDColumn(2,13,other_ev);
+//     man->FillNtupleDColumn(2,14,seed1);
+//     man->FillNtupleDColumn(2,15,seed2);
+//     man->AddNtupleRow(2);
     
-  }
+//   }
 
 }
 

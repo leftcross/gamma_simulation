@@ -392,45 +392,23 @@ void DAMICParticleSource::GenerateMonoEnergetic()
   particle_energy = MonoEnergy;
 }
 
-void DAMICParticleSource::GenerateMuonEnergyDist()
+void DAMICParticleSource::GenerateNeutronEnergyDist()
 {
-  G4double h = LabDepth/1.e6; //h converted by G4 in mm 
-  G4double rndm = 2.;
-  G4double rndm2 = 2.;
-  G4double emin = 0.01; //in GeV
-  G4double emax = 5000.; //in GeV
-  G4double energy = 0;
-  G4double A = 1;
-  if (h > 3.05 && h<3.15)  A = 1./2.94991e-11; //A = 1./4.04926e-10;
-  else if (h > 4.15 && h<4.25 ) A =1./5.24346e-12; //1./8.22228e-11;
-  else if (h > 6 && h<6.02) A = 1./4.64053e-13;//1./8.12053e-12;
-  G4double b = 0.4*h;
-  G4double g_mu = 3.77;
-  G4double eps_mu = 693;
-  G4double p = 1.;
+  G4double a=1.025 , b=2.926 ,c=3.32963;
+  G4double emin=0.,emax=14.;
+  G4double ymin=0,ymax=1.0;
+  G4double randnumx=G4UniformRand()*(emax-emin) + emin; 
+  G4double randnumy=G4UniformRand()*(ymax-ymin) + ymin;
+  G4double fx=c*exp(-randnumx/a)*std::sinh(std::sqrt(b*randnumx));
   
-  //  G4double sintheta, sinphi, costheta, cosphi;
-  G4int nsteps = 0;
-  if (h==0) { G4cout << " still something wrong with h" << G4endl; return;}
-  rndm = G4UniformRand()*(log(emax) - log(emin)) + log(emin);
-  rndm2 = G4UniformRand();
-  p = A*exp(-b*(g_mu-1)) * pow(rndm + eps_mu*(1 - exp(-b)), -g_mu);
-  //  p = log(A*exp(-b*(g_mu-1))) -g_mu*log(rndm + eps_mu*(1 - exp(-b)));
-  //  G4cout << G4endl << A << "* exp(-" << b <<"*("<<g_mu-1<<")) * pow("<<rndm << " + " << eps_mu*(1-exp(-b)) << ", " << -g_mu << G4endl;
-
-  while (rndm2 > p) {
-    //    rndm = G4UniformRand()*(emax - emin) + emin;
-    rndm = G4UniformRand()*(log(emax) - log(emin)) + log(emin);
-    rndm2 = G4UniformRand();
-    p = A*exp(-b*(g_mu-1)) * pow(rndm + eps_mu*(1 - exp(-b)), -g_mu);
-    // p = log(A*exp(-b*(g_mu-1))) -g_mu*log(rndm + eps_mu*(1 - exp(-b)));
-    // G4cout << " " << nsteps << " " <<  rndm << " " << rndm2 << " <  " << p << G4endl;
-    nsteps++;
-    // if (nsteps>1000) break;
-  }
-  
-  particle_energy = exp(rndm);
-  
+  while(randnumy>fx)
+  {
+  randnumx=G4UniformRand()*(emax-emin) + emin; 
+  randnumy=G4UniformRand();
+  fx=c*exp(-randnumx/a)*std::sinh(std::sqrt(b*randnumx)); 
+  } 
+  particle_energy = randnumx; 
+//  G4cout<<" Particle energy "<<particle_energy<<std::endl; 
 }
 
 
@@ -508,8 +486,8 @@ void DAMICParticleSource::GeneratePrimaryVertex(G4Event *evt)
     GenerateMonoEnergetic();
   //  else if (EnergyDisType == "Uniform")
   //   GenerateUniformEnergetic();
-  else if (EnergyDisType == "Muon")
-    GenerateMuonEnergyDist();
+  else if (EnergyDisType == "CF252")
+    GenerateNeutronEnergyDist();
   else 
     G4cout << "Error: EnergyDisType has unusual value" << G4endl;
   

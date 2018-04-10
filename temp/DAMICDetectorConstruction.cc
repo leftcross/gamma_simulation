@@ -146,12 +146,13 @@ G4VPhysicalVolume* DAMICDetectorConstruction::Construct() {
 
 
   // Universe - room wall - CONCRETE ****************************************
+  //NB: measured INSIDE of lab, therefore have to add twice wall thickness
 
   G4double Offset_DAMICGeoZ = 0 ;  
   G4double wallThick   = 5.0*cm;
-  G4double worldWidth  = 127*2.54*cm + 2.*wallThick; // "x"
-  G4double worldLength = 127*2.54*cm + 2.*wallThick; // "y"
-  G4double worldHeight = 127*2.54*cm + 2.*wallThick; // "z"
+  G4double worldWidth  = 800.0*cm + 2.*wallThick; // "x"
+  G4double worldLength = 800.0*cm + 2.*wallThick; // "y"
+  G4double worldHeight = 800.0*cm + 2.*wallThick; // "z"
 
 
   G4Box* WorldBox = new G4Box("world", 0.5*worldWidth, 0.5*worldLength, 0.5*worldHeight);
@@ -159,15 +160,11 @@ G4VPhysicalVolume* DAMICDetectorConstruction::Construct() {
   WorldPV = new G4PVPlacement(0, G4ThreeVector(0.,0.,0), "WorldPV", WorldLV, NULL, false,0);
 
   G4VisAttributes* world_vat= new G4VisAttributes(orange);
+  // WorldLV->SetVisAttributes(G4VisAttributes::GetInvisible());
   world_vat->SetVisibility(true);
+  //world_vat->SetVisibility(false);
   //world_log->SetVisAttributes(world_vat);
   
-
-
-
-
-
-
   
   // Lab Space - AIR ********************************************************
 
@@ -183,34 +180,17 @@ G4VPhysicalVolume* DAMICDetectorConstruction::Construct() {
   //  lab_vat->SetVisibility(true);
   lab_vat->SetVisibility(true);
   LabLV->SetVisAttributes(lab_vat);
- 
-
-
-
-
-
- 
-//  ----- Lead shielding  ---- \\
-
-  G4double frontlead=4*2.54*cm;
-  G4double backlead=10*2.54*cm;
-  G4double sidelead=8*2.54*cm;
-  G4double toplead=2*2.54*cm;
-  G4double gapX=(8*2.54+0.01)*cm;
-  G4double gapY=(8*2.54+0.01)*cm;
-  G4double gapZ=(8*2.54+0.01)*cm;
   
-  G4double OutLeadBoxX = (toplead+gapX+toplead);
-  G4double OutLeadBoxY = (sidelead+gapY+sidelead);
-  G4double OutLeadBoxZ = (frontlead+gapZ+backlead);
+//  ----- Lead shielding  ---- 
+  G4double OutLeadBoxX = (2+6+2)*2.54*cm;
+  G4double OutLeadBoxY = (4+8+4)*2.54*cm;
+  G4double OutLeadBoxZ = (8+6+6)*2.54*cm;
 
-  G4double InLeadBoxX = gapX; //defining only 1 type of lead 
-  G4double InLeadBoxY = gapY;
-  G4double InLeadBoxZ = gapZ;
- 
-  G4double PosLeadGapZ= (backlead-frontlead)/2.0;
- 
-// Outer Lead Shield
+  G4double InLeadBoxX = (8+0.1)*2.54*cm; //defining only 1 type of lead 
+  G4double InLeadBoxY = (8+0.1)*2.54*cm;
+  G4double InLeadBoxZ = (8+0.1)*2.54*cm;
+  G4double LeadBoxThickness = (6+2)*2.54*cm; //6" of Fermilab lead + 2 ancient lead =  thickness from each side
+  
   
    G4Box *outerLeadBox = new G4Box("Outer Box", OutLeadBoxX/2.,OutLeadBoxY/2.,OutLeadBoxZ/2.);   
    extLeadBoxLV = new G4LogicalVolume(outerLeadBox, LeadMat, "extLeadBoxLV");
@@ -219,31 +199,26 @@ G4VPhysicalVolume* DAMICDetectorConstruction::Construct() {
    extLeadBoxLV->SetVisAttributes(lead_vat); 
 
 
-// Inner Cavity of Lead
-
    //--- empty space in the hollow lead box --
     G4Box *emptyLeadBox = new G4Box("emptyLeadBox", InLeadBoxX/2., InLeadBoxY/2., InLeadBoxZ/2.);
-    G4LogicalVolume * emptyLeadBoxLV = new G4LogicalVolume(emptyLeadBox, LabMat, "emptyLeadBoxLV");
+    G4LogicalVolume * emptyLeadBoxLV = new G4LogicalVolume(emptyLeadBox, VacuumMat, "emptyLeadBoxLV");
    G4VisAttributes* vacuumlead_vat= new G4VisAttributes(blue);
    vacuumlead_vat->SetVisibility(true);
    emptyLeadBoxLV->SetVisAttributes(vacuumlead_vat); 
-
-
-
-
-
-
-
-//-----------  Old Chamber -----------\\
 
   G4double OutSteelBoxX= 6*2.54*cm;
   G4double OutSteelBoxY= 6*2.54*cm;
   G4double OutSteelBoxZ= 6*2.54*cm;
   
- G4double distance_chamber=10*cm;
-  G4Box* outerSteelBox= new G4Box("Outer chamber",OutSteelBoxX/2., OutSteelBoxY/2., OutSteelBoxZ/2. );
+ // G4double InSteelBoxX= 40*cm;
+ // G4double InSteelBoxY= 40*cm;
+ // G4double InSteelBoxZ= 40*cm;
 
-// Steel Box
+  G4Box* outerSteelBox= new G4Box("Outer chamber",OutSteelBoxX/2., OutSteelBoxY/2., OutSteelBoxZ/2. );
+  
+  G4Sphere* emptySteelSphere=new G4Sphere("empty steel sphere",0.,(3*2.54*cm), 0*degree, 360*degree, 0*degree, 180*degree);
+
+//  G4VSolid* boxminussphere=new G4SubtractionSolid("cube-sphere",outerSteelBox,emptySteelSphere); 
 
   G4LogicalVolume * extSteelBoxLV = new G4LogicalVolume(outerSteelBox, StainSteelMat, "extSteelBoxLV");
   G4VisAttributes* steel_vat=new G4VisAttributes(green);
@@ -251,157 +226,102 @@ G4VPhysicalVolume* DAMICDetectorConstruction::Construct() {
   extSteelBoxLV->SetVisAttributes(steel_vat);
 
  
-// Flange
+
+ // G4Box *emptySteelBox = new G4Box("emptySteelBox",InSteelBoxX/2.,InSteelBoxY/2.,InSteelBoxZ/2.);
+ // G4LogicalVolume * emptySteelBoxLV = new G4LogicalVolume(emptySteelBox,VacuumMat, "emptySteelBoxLV");
   
-  G4double rad_flange=3*2.54*cm;
-  G4double rad_inner_flange=1.5*2.54*cm;
-  G4double thick_flange=1*cm;
-
-
- G4VSolid* cylinder1=new G4Tubs("cylinder1",rad_inner_flange,rad_flange,thick_flange/2.0,0.,360*degree);
- G4VSolid* cylinder2=new G4Tubs("cylinder2",0.,rad_flange,thick_flange/2.0,0.,360*degree);
+  G4double rad_cyl_cavity=7*2.54*cm;
+  G4double thick_cyl_cavity=1*2.54*cm;
+  G4VSolid* cylinder1=new G4Tubs("Cylinder1",0.,rad_cyl_cavity,thick_cyl_cavity,0.,360*degree);
   
- 
- G4LogicalVolume* flangefront1LV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangefront1LV");
+ // G4VSolid* union1=new G4UnionSolid("Cylinder1+Sphere",emptySteelSphere,cylinder1); 
 
- G4LogicalVolume* flangeback1LV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangeback1LV");
-
- G4LogicalVolume* flangefront2LV=new G4LogicalVolume(cylinder2,StainSteelMat,"flangefront2LV");
-
- G4LogicalVolume* flangeback2LV=new G4LogicalVolume(cylinder2,StainSteelMat,"flangeback2LV");
-
- G4VisAttributes* steelflange_vat=new G4VisAttributes(green);
- steelflange_vat->SetVisibility(true);
- flangefront1LV->SetVisAttributes(steelflange_vat);
- flangefront2LV->SetVisAttributes(steelflange_vat);
-
- flangeback1LV->SetVisAttributes(steelflange_vat);
- flangeback2LV->SetVisAttributes(steelflange_vat);
-
-
-
-//-------------------  empty sphere ---------------------//  
-
- G4Sphere* emptySteelSphere=new G4Sphere("empty steel sphere",0.,(3*2.54*cm), 0*degree, 360*degree, 0*degree, 180*degree);
   G4LogicalVolume* emptySteelSphereLV= new G4LogicalVolume(emptySteelSphere, VacuumMat, "emptySteelSphereLV");
   G4VisAttributes* vacuumsteel_vat=new G4VisAttributes(green);
   vacuumsteel_vat->SetVisibility(true);
   emptySteelSphereLV->SetVisAttributes(vacuumsteel_vat);
 
+  LabPV = new G4PVPlacement(0, G4ThreeVector(0.,0.,0), "LabPV", LabLV, WorldPV, false,0);
+  G4PVPlacement* extLeadBoxPV = new G4PVPlacement(0, G4ThreeVector(0.,0., 0.),
+						     "extLeadBoxPV", extLeadBoxLV, LabPV, false,true);
+  G4PVPlacement* emptyLeadBoxPV = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.),
+						  "emptyLeadBoxPV", emptyLeadBoxLV, extLeadBoxPV, false,true);
+ 
+  G4double distance_chamber=150*cm;
+ 
+ G4PVPlacement* extSteelBoxPV = new G4PVPlacement(0, G4ThreeVector(0.,0.,distance_chamber), "extSteelBoxPV", extSteelBoxLV, LabPV, false, true);	
+ G4PVPlacement* emptySteelSpherePV= new G4PVPlacement(0, G4ThreeVector(0*cm, 0., 0*cm), "emptySteelSpherePV", emptySteelSphereLV, extSteelBoxPV, false, true);   
+ 
 
-
+//G4double r_min=2*2.54*cm;
 G4double r_max=4.*2.54*cm;
-
-
-// -------------- bonner sphere ------------------//
 
 G4Sphere* extbonner= new G4Sphere("bonner sphere",0., r_max, 0*degree, 360*degree, 0*degree, 180*degree); 
 G4LogicalVolume* extBonnerSphereLV= new G4LogicalVolume(extbonner,PolyMat,"extBonnerSphereLV");
-G4VisAttributes* extbonnerPoly_vat=new G4VisAttributes(orange);
+G4VisAttributes* extbonnerPoly_vat=new G4VisAttributes(red);
 extbonnerPoly_vat->SetVisibility(true);
 extBonnerSphereLV->SetVisAttributes(extbonnerPoly_vat);
 
 
+//G4Sphere* emptybonner= new G4Sphere("inner bonner sphere", 0. , r_min, 0*degree, 360*degree, 0*degree, 180*degree);
+//G4LogicalVolume* emptyBonnerSphereLV= new G4LogicalVolume(emptybonner, VacuumMat, "emptyBonnerSphereLV");
+//G4VisAttributes* emptybonnerVacuum_vat=new G4VisAttributes(lblue);
+//emptybonnerVacuum_vat->SetVisibility(true);
+//emptyBonnerSphereLV->SetVisAttributes(emptybonnerVacuum_vat);
 
-// ---------------- table --------------//
+
+G4PVPlacement* extBonnerSpherePV= new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),"extBonnerSpherePV",extBonnerSphereLV,emptyLeadBoxPV, false, true);
 
 G4double tableX=2.54*cm;
 G4double tableY=95*2.54*cm;
 G4double tableZ=36*2.54*cm;
 
-// poly
-
 G4Box* tablePolyBox= new G4Box("Upper table poly",tableX/2., tableY/2., tableZ/2.);
 G4LogicalVolume* polyTableLV=new G4LogicalVolume(tablePolyBox,PolyMat,"polyTableLV");
-G4VisAttributes* polyTable_vat=new G4VisAttributes(orange);
+G4VisAttributes* polyTable_vat=new G4VisAttributes(red);
 polyTable_vat->SetVisibility(true);
 polyTableLV->SetVisAttributes(polyTable_vat);
 
 G4double distance_table=distance_chamber+25*cm;
+G4PVPlacement* polyTablePV=new G4PVPlacement(0, G4ThreeVector(-1*OutSteelBoxX/2.-tableX/2.,0.,distance_table),"polyTablePV",polyTableLV,LabPV,false,true);
 
 G4double thickness_plastic=0.4*cm;
-
-//wood
-
 G4Box* tableWoodBox= new G4Box("upper table wood", (tableX/2.-thickness_plastic),(tableY/2.0 - thickness_plastic), (tableZ/2.0 - thickness_plastic));  
 G4LogicalVolume* woodTableLV= new G4LogicalVolume(tableWoodBox,TableMat,"woodTableLV");
-G4VisAttributes* woodTable_vat=new G4VisAttributes(red);
+G4VisAttributes* woodTable_vat=new G4VisAttributes(orange);
 woodTable_vat->SetVisibility(true);
 woodTableLV->SetVisAttributes(woodTable_vat);
 
-
-
-
-//----------------- Steel Cart -------------//
-
-G4double SteelCartX=1*2.54*cm;
-G4double SteelCartY=36*2.54*cm;
-G4double SteelCartZ=24*2.54*cm;
-G4double SteelCartPosZ=(OutLeadBoxZ - SteelCartZ)/2.0;
-G4double SteelCartPosX=-OutLeadBoxX/2. -SteelCartX/2.;
-
-G4Box* cartSteelBox=new G4Box("steel cart",SteelCartX/2.,SteelCartY/2.,SteelCartZ/2.);
-G4LogicalVolume* cartSteelBoxLV=new G4LogicalVolume(cartSteelBox,StainSteelMat,"cartSteelBoxLV");
-cartSteelBoxLV->SetVisAttributes(steelflange_vat);
-
-
-
-
-
-//----------------- Volume placement ------------- // 
-
- G4double posSteelBoxZ=distance_chamber+OutLeadBoxZ/2.0+2*thick_flange+OutSteelBoxZ/2.0;
- G4double posTableZ=distance_chamber+OutLeadBoxZ/2.0+tableZ/2.0; 
-
- G4double distance_flange1=posSteelBoxZ - OutSteelBoxZ/2.0 - thick_flange/2.; 
- G4double distance_flange2=distance_flange1-thick_flange;
-
- G4double distance_flange3=posSteelBoxZ + OutSteelBoxZ/2.0 + thick_flange/2.; 
- G4double distance_flange4=distance_flange3+ thick_flange;
-
-
-
-  LabPV = new G4PVPlacement(0, G4ThreeVector(0.,0.,0), "LabPV", LabLV, WorldPV, false,0);
-  G4PVPlacement* extLeadBoxPV = new G4PVPlacement(0, G4ThreeVector(0.,0., 0.),
-						     "extLeadBoxPV", extLeadBoxLV, LabPV, false,true);
-  G4PVPlacement* emptyLeadBoxPV = new G4PVPlacement(0, G4ThreeVector(0.,0.,PosLeadGapZ),
-						  "emptyLeadBoxPV", emptyLeadBoxLV, extLeadBoxPV, false,true);
-
-
-
- G4PVPlacement* extSteelBoxPV = new G4PVPlacement(0, G4ThreeVector(0.,0.,posSteelBoxZ), "extSteelBoxPV", extSteelBoxLV, LabPV, false, true);	
- G4PVPlacement* emptySteelSpherePV= new G4PVPlacement(0, G4ThreeVector(0*cm, 0., 0*cm), "emptySteelSpherePV", emptySteelSphereLV, extSteelBoxPV, false, true);   
-
-
-
- G4PVPlacement* flangefront1PV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange1),"flangefront1PV",flangefront1LV,LabPV, false, true);
-
- G4PVPlacement* flangefront2PV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange2),"flangefront2PV",flangefront2LV,LabPV, false, true);
-
- G4PVPlacement* flangeback1PV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange3),"flangeback1PV",flangeback1LV,LabPV, false, true);
-
-
- G4PVPlacement* flangeback2PV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange4),"flangeback2PV",flangeback2LV,LabPV, false, true);
-
-
-
-G4PVPlacement* extBonnerSpherePV= new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),"extBonnerSpherePV",extBonnerSphereLV,emptyLeadBoxPV, false, true);
-
-
-G4PVPlacement* polyTablePV=new G4PVPlacement(0, G4ThreeVector(-1*OutSteelBoxX/2.-tableX/2.,0.,posTableZ),"polyTablePV",polyTableLV,LabPV,false,true);
-
 G4PVPlacement* woodTablePV= new G4PVPlacement(0, G4ThreeVector(0.,0.,0.),"woodTablePV",woodTableLV,polyTablePV,false,true);
 
-G4PVPlacement* cartSteelBoxPV= new G4PVPlacement(0, G4ThreeVector(SteelCartPosX,0.,SteelCartPosZ),"cartSteelBoxPV",cartSteelBoxLV,LabPV,false,true);
-
+//G4PVPlacement* emptyBonnerSpherePV= new G4PVPlacement(0,G4ThreeVector(0.,0.,0.), "emptyBonnerSpherePV", emptyBonnerSphereLV, extBonnerSpherePV, false, true);
 
 
 // -------------------------------------------MODULES---------------------------------------
 
-  G4LogicalVolume* CCDLV = GetConstructionCCDSensor44();
+  // CCD01_44LV = GetConstructionCCDSensor44();
+  // CCD02_44LV = GetConstructionCCDSensor44();
+  // CCD03_44LV = GetConstructionCCDSensor44();
+  // CCD04_44LV = GetConstructionCCDSensor44();
+  // CCD05_44LV = GetConstructionCCDSensor44();
+  // CCD06_44LV = GetConstructionCCDSensor44();
+  // //CCD07_44LV = GetConstructionCCDSensor44();
   
+  // G4double PosZModule44 = 6.35/2*mm + 5.994/2*mm+3*mm; //PosZBottomPlate + 6.35/2*mm + 5.994/2*mm+3*mm;
+  // G4double PosYModule44 =  6.35/2*mm - 116.332/2*mm -1.800*mm; //PosYRearPlate - 6.35/2*mm - 116.332/2*mm -1.800*mm;
 
-   G4PVPlacement* CCDPV = new G4PVPlacement(0, G4ThreeVector(0,0,0), CCDLV, "CCDPV", emptySteelSphereLV, false, 0, false);
+  // G4ThreeVector Module44Vect = G4ThreeVector(0,PosYModule44,PosZModule44);
+  // G4ThreeVector uModule44 = G4ThreeVector(0,-1,0);
+  // G4ThreeVector vModule44 = G4ThreeVector(1,0,0);
+  // G4ThreeVector wModule44 = G4ThreeVector(0,0,1);
+  // G4RotationMatrix* Module44Rot = new G4RotationMatrix(uModule44, vModule44, wModule44);
+
+  // G4PVPlacement* CCD01PV = new G4PVPlacement(Module44Rot, G4ThreeVector(0,PosYModule44,PosZModule44+ 00*mm), CCD01_44LV, "CCD01PV", emptyLeadBoxLV, false, 0, false);
+  // G4PVPlacement* CCD02PV = new G4PVPlacement(Module44Rot, G4ThreeVector(0,PosYModule44,PosZModule44+ 20*mm), CCD02_44LV, "CCD02PV", emptyLeadBoxLV, false, 0, false);
+  // G4PVPlacement* CCD03PV = new G4PVPlacement(Module44Rot, G4ThreeVector(0,PosYModule44,PosZModule44+ 40*mm), CCD03_44LV, "CCD03PV", emptyLeadBoxLV, false, 0, false);
+  // G4PVPlacement* CCD04PV = new G4PVPlacement(Module44Rot, G4ThreeVector(0,PosYModule44,PosZModule44+ 60*mm), CCD04_44LV, "CCD04PV", emptyLeadBoxLV, false, 0, false);
+  // G4PVPlacement* CCD05PV = new G4PVPlacement(Module44Rot, G4ThreeVector(0,PosYModule44,PosZModule44+ 80*mm), CCD05_44LV, "CCD05PV", emptyLeadBoxLV, false, 0, false);
+  // G4PVPlacement* CCD06PV = new G4PVPlacement(Module44Rot, G4ThreeVector(0,PosYModule44,PosZModule44+100*mm), CCD06_44LV, "CCD06PV", emptyLeadBoxLV, false, 0, false);
   
  
   return WorldPV;

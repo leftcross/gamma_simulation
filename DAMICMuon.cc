@@ -58,9 +58,9 @@
 
 #include "DAMICAnalysisManager.hh"
 #include "DAMICDetectorConstruction.hh"
-#include "DAMICPhysicsList.hh"
+#include "Shielding.hh" 
 #include "DAMICActionInitializer.hh"
-
+#include "DAMICPhysicsList.hh"
 int main(int argc,char** argv) {
 
   // choose the Random engine
@@ -76,8 +76,9 @@ int main(int argc,char** argv) {
 
   // set mandatory initialization classes
   runManager->SetUserInitialization(new DAMICDetectorConstruction);
-  runManager->SetUserInitialization(new DAMICPhysicsList);
-  runManager->SetUserInitialization(new DAMICActionInitializer());
+  runManager->SetUserInitialization(new Shielding); 
+// runManager->SetUserInitialization(new DAMICPhysicsList); 
+ runManager->SetUserInitialization(new DAMICActionInitializer());
 
 #ifdef G4VIS_USE
   // visualization manager

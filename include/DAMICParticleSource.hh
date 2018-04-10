@@ -89,7 +89,7 @@ class DAMICParticleSource : public G4VPrimaryGenerator {
      void SetEnergyDisType(G4String);
      void SetMonoEnergy(G4double);
      void GenerateMonoEnergetic();
-     void GenerateMuonEnergyDist(); 
+     void GenerateNeutronEnergyDist(); 
      inline G4double GetParticleEnergy() {return particle_energy;}
 
      // verbosity

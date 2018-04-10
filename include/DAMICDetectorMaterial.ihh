@@ -47,3 +47,4 @@
   G4Material*    GalacticMat;
   G4Material*    StainSteelMat;
   G4Material*    PolyMat;
+  G4Material*    TableMat;

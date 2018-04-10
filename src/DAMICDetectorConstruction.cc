@@ -192,7 +192,7 @@ G4VPhysicalVolume* DAMICDetectorConstruction::Construct() {
  
 //  ----- Lead shielding  ---- \\
 
-  G4double frontlead=4*2.54*cm;
+  G4double frontlead=10*2.54*cm;
   G4double backlead=10*2.54*cm;
   G4double sidelead=8*2.54*cm;
   G4double toplead=2*2.54*cm;
@@ -336,7 +336,7 @@ woodTableLV->SetVisAttributes(woodTable_vat);
 
 G4double SteelCartX=1*2.54*cm;
 G4double SteelCartY=36*2.54*cm;
-G4double SteelCartZ=24*2.54*cm;
+G4double SteelCartZ=OutLeadBoxZ;
 G4double SteelCartPosZ=(OutLeadBoxZ - SteelCartZ)/2.0;
 G4double SteelCartPosX=-OutLeadBoxX/2. -SteelCartX/2.;
 

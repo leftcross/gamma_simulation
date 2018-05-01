@@ -193,7 +193,8 @@ void DAMICSteppingAction::UserSteppingAction(const G4Step* fStep)
 	}
 
 //if(  (Volume == "extBonnerSphereLV") && ((NextVolume == "emptyLeadBoxPV")||(NextVolume =="extLeadBoxPV")) ) {
-  if( Volume == "CCDLV") {  
+//  G4cout<<"Next volume is "<<NextVolume<<" Current "<<Volume<<std::endl;
+  if( Volume == "CCDSensor") {  
    // if(StoreNeutron==1) {  
     G4AnalysisManager* man = G4AnalysisManager::Instance();
     man->FillNtupleIColumn(0,0,event_id);

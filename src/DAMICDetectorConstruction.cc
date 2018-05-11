@@ -345,8 +345,21 @@ G4LogicalVolume* cartSteelBoxLV=new G4LogicalVolume(cartSteelBox,StainSteelMat,"
 cartSteelBoxLV->SetVisAttributes(steelflange_vat);
 
 
+//-----------------Copper mount--------------//
+// For simplicity we just keep a copper plate behind the CCD
 
+G4double CopperPlateX=116*mm;
+G4double CopperPlateY=116*mm;
+G4double CopperPlateZ=0.79*2.54*mm;
 
+G4Box* copperPlate=new G4Box("copper bar",CopperPlateX/2.0,CopperPlateY/2.0,CopperPlateZ/2.0);
+G4Material* Copper = G4Material::GetMaterial("G4_Cu");
+G4LogicalVolume* copperPlateLV= new G4LogicalVolume(copperPlate,Copper,"copperPlateLV");
+ G4VisAttributes* copper_vat=new G4VisAttributes(blue);
+copper_vat->SetVisibility(true);
+copperPlateLV->SetVisAttributes(copper_vat);
+
+G4double CopperPlatePosZ=0.675/2.0*mm+CopperPlateZ/2.0;
 
 //----------------- Volume placement ------------- // 
 
@@ -403,7 +416,8 @@ G4PVPlacement* cartSteelBoxPV= new G4PVPlacement(0, G4ThreeVector(SteelCartPosX,
 
    G4PVPlacement* CCDPV = new G4PVPlacement(0, G4ThreeVector(0,0,0), CCDLV, "CCDPV", emptySteelSphereLV, false, 0, false);
   
- 
+   G4PVPlacement* copperPlatePV= new G4PVPlacement(0,G4ThreeVector(0,0,CopperPlatePosZ),"copperPlatePV",copperPlateLV,emptySteelSpherePV,false,true); 
+
   return WorldPV;
 
 }

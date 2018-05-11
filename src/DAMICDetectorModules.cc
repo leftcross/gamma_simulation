@@ -284,8 +284,8 @@ G4LogicalVolume* GetConstructionProtectiveCover()
 
 G4LogicalVolume* GetConstructionCCDSensor44(){
 
-  G4double mainBoxX = 63.99*mm;
-  G4double mainBoxY = 64.36*mm;
+  G4double mainBoxX = 30.68*mm;
+  G4double mainBoxY = 61.44*mm;
   G4double mainBoxZ = 0.675*mm;
   G4Colour  red     (1.0, 0.0, 0.0) ;
   G4Box* mainBox  = new G4Box("mainBox", mainBoxX/2, mainBoxY/2, mainBoxZ/2);

@@ -135,7 +135,6 @@ void DAMICRunAction::Book()
     man->CreateNtupleDColumn("primY"); //4 
     man->CreateNtupleDColumn("primZ"); //5 
     //   man->CreateNtupleSColumn("primLV"); //6 Logical Volume
-
     //current particle infos
     man->CreateNtupleIColumn("trackID"); //7
     man->CreateNtupleIColumn("stepID"); //8
@@ -165,9 +164,9 @@ void DAMICRunAction::Book()
     man->CreateNtupleIColumn("stepNsecondaries");  //28 //from G4start
         //mother info - particle Change
     man->CreateNtupleIColumn("partMotherID"); //29  : 0,1 if there is a part change
-    man->CreateNtupleDColumn("partTheta");   // 30, particle theta 
-    man->CreateNtupleDColumn("partPhi");     // 31, particle phi
-
+//    man->CreateNtupleDColumn("partTheta");   // 30, particle theta 
+//    man->CreateNtupleDColumn("partPhi");     // 31, particle phi
+    man->CreateNtupleSColumn("prodVolume");
     man->FinishNtuple();
 
   // ---- tertiary ntuple ------   

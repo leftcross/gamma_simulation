@@ -109,7 +109,10 @@ void DAMICSteppingAction::UserSteppingAction(const G4Step* fStep)
   G4double energy_pri = evtAction->GetEventEnergy();
  
 // G4int StepNo=fStep->GetTrack()->GetCurrentStepNumber(); 
- 
+// G4cout<<" Vol no "<<fStep->GetTrack()->GetOriginTouchable()->GetVolume()->GetName();
+// G4cout<<" Event id "<<event_id<<" Track id "<<fStep->GetTrack()->GetTrackID()<<" Posz "<<fStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetName() <<std::endl;
+  G4String prodVol=fStep->GetTrack()->GetOriginTouchable()->GetVolume()->GetName(); 
+
   G4int stepNsec = 0;
   if (fStep->GetSecondary()!=0)
     stepNsec  = fStep->GetSecondary()->size();
@@ -228,6 +231,7 @@ void DAMICSteppingAction::UserSteppingAction(const G4Step* fStep)
     man->FillNtupleSColumn(0, 21, NextMaterial);      //21
     man->FillNtupleIColumn(0, 22, stepNsec); 
     man->FillNtupleIColumn(0, 23, motherId); //16
+    man->FillNtupleSColumn(0,24,prodVol);
     man->AddNtupleRow(0);
 
     //fStep->GetTrack()->SetTrackStatus(fStopAndKill);

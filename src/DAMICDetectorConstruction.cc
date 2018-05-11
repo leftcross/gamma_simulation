@@ -240,12 +240,51 @@ G4VPhysicalVolume* DAMICDetectorConstruction::Construct() {
   G4double OutSteelBoxY= 6*2.54*cm;
   G4double OutSteelBoxZ= 6*2.54*cm;
   
+
+  G4double flangeThick  = 0.5*2.54*cm;
+  G4double cylRad     = 2*2.54*cm;
+  
+  G4double sideThick = 5.25*2.54*cm;
+
+  G4Box* steelbox = new G4Box("SteelBox",OutSteelBoxX/2.,OutSteelBoxY/2.,OutSteelBoxZ/2.);
+  G4Tubs* cut1 = new G4Tubs("cut1",0,cylRad,OutSteelBoxX-0.5*cm,0,360*degree);
+  G4Tubs* cut2 = new G4Tubs("cut2",0,cylRad,OutSteelBoxY-0.5*cm,0,360*degree);
+  G4Tubs* cut3 = new G4Tubs("cut3",0,cylRad,OutSteelBoxZ-0.5*cm,0,360*degree);
+  
+  G4Tubs* fl1 = new G4Tubs("fl1",cylRad-0.5*cm ,cylRad,sideThick/2.,0,360*degree);
+  G4Tubs* fl2 = new G4Tubs("fl2",cylRad-0.5*cm,cylRad,sideThick/2.,0,360*degree);
+
+  G4Tubs* fl3 = new G4Tubs("fl1",0,cylRad+1*cm,flangeThick/2.,0,360*degree);
+  G4Tubs* fl4 = new G4Tubs("fl1",0,cylRad+1*cm,flangeThick/2.,0,360*degree);
+  G4Tubs* fl5 = new G4Tubs("fl1",0,cylRad+1*cm,flangeThick/2.,0,360*degree);
+  G4Tubs* fl6 = new G4Tubs("fl1",0,cylRad+1*cm,flangeThick/2.,0,360*degree);
+  
+  G4RotationMatrix* rm1 = new G4RotationMatrix();
+  G4RotationMatrix* rm2 = new G4RotationMatrix();
+  rm1->rotateX(90*deg);
+  rm2->rotateY(90*deg);
+  G4VSolid* cut12 = new G4UnionSolid("cut1+cut2", cut1, cut2,rm1,G4ThreeVector());
+  G4VSolid* cut123 = new G4UnionSolid("cut12+cut3",cut12,cut3,rm2,G4ThreeVector()); 
+  
+  G4VSolid* subtractbox = new G4SubtractionSolid("Box-cut123", steelbox, cut123, 0, G4ThreeVector());
+  
+  G4VSolid* boxfl1 = new G4UnionSolid("sBox+fl1",subtractbox,fl1,rm1,G4ThreeVector(0,(OutSteelBoxY+sideThick)/2,0));
+  G4VSolid* steelchamber = new G4UnionSolid("sBox+fl2",boxfl1,fl2,rm1,G4ThreeVector(0,-(OutSteelBoxY+sideThick)/2,0));
+  
+ // G4VSolid* boxfl3 = new G4UnionSolid("sBox+fl3",boxfl2,fl3,rm2,G4ThreeVector((OutSteelBoxX+flangeThick)/2,0,0));
+ // G4VSolid* boxfl4 = new G4UnionSolid("sBox+fl4",boxfl3,fl4,rm2,G4ThreeVector(-(OutSteelBoxX+flangeThick)/2,0,0));
+ 
+ // G4VSolid* boxfl5 = new G4UnionSolid("sBox+fl5",boxfl4,fl5,0,G4ThreeVector(0,0,(OutSteelBoxZ+flangeThick)/2));
+ // G4VSolid* sTarget = new G4UnionSolid("sBox+fl6",boxfl5,fl6,0,G4ThreeVector(0,0,-(OutSteelBoxZ+flangeThick)/2));
+
+
+
  G4double distance_chamber=10*cm;
-  G4Box* outerSteelBox= new G4Box("Outer chamber",OutSteelBoxX/2., OutSteelBoxY/2., OutSteelBoxZ/2. );
+//  G4Box* outerSteelBox= new G4Box("Outer chamber",OutSteelBoxX/2., OutSteelBoxY/2., OutSteelBoxZ/2. );
 
 // Steel Box
 
-  G4LogicalVolume * extSteelBoxLV = new G4LogicalVolume(outerSteelBox, StainSteelMat, "extSteelBoxLV");
+  G4LogicalVolume * extSteelBoxLV = new G4LogicalVolume(steelchamber, StainSteelMat, "extSteelBoxLV");
   G4VisAttributes* steel_vat=new G4VisAttributes(green);
   steel_vat->SetVisibility(true);
   extSteelBoxLV->SetVisAttributes(steel_vat);
@@ -258,11 +297,14 @@ G4VPhysicalVolume* DAMICDetectorConstruction::Construct() {
   G4double thick_flange=2*cm;
 
 
- G4VSolid* cylinder1=new G4Tubs("cylinder1",rad_inner_flange,rad_flange,thick_flange/2.0,0.,360*degree);
+ G4VSolid* cylinder1=new G4Tubs("cylinder1",0.,rad_flange,thick_flange,0.,360*degree); // bigger flange on sides
+
  G4VSolid* cylinder2=new G4Tubs("cylinder2",0.,rad_flange,thick_flange/2.0,0.,360*degree);
   
  
- //G4LogicalVolume* flangefront1LV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangefront1LV");
+ G4LogicalVolume* flangeleftLV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangeleftLV");
+
+ G4LogicalVolume* flangerightLV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangerightLV");
 
 // G4LogicalVolume* flangeback1LV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangeback1LV");
 
@@ -270,23 +312,29 @@ G4VPhysicalVolume* DAMICDetectorConstruction::Construct() {
 
  G4LogicalVolume* flangebackLV=new G4LogicalVolume(cylinder2,StainSteelMat,"flangebackLV");
 
+ G4LogicalVolume* flangetopLV=new G4LogicalVolume(cylinder2,StainSteelMat,"flangetopLV");
+
+ G4LogicalVolume* flangebottomLV=new G4LogicalVolume(cylinder2,StainSteelMat,"flangebottomLV");
+
+
  G4VisAttributes* steelflange_vat=new G4VisAttributes(green);
  steelflange_vat->SetVisibility(true);
-// flangefront1LV->SetVisAttributes(steelflange_vat);
+ flangerightLV->SetVisAttributes(steelflange_vat);
  flangefrontLV->SetVisAttributes(steelflange_vat);
-
-// flangeback1LV->SetVisAttributes(steelflange_vat);
+ flangetopLV->SetVisAttributes(steelflange_vat);
+ flangebottomLV->SetVisAttributes(steelflange_vat);
+ flangeleftLV->SetVisAttributes(steelflange_vat);
  flangebackLV->SetVisAttributes(steelflange_vat);
 
 
 
 //-------------------  empty sphere ---------------------//  
 
- G4Sphere* emptySteelSphere=new G4Sphere("empty steel sphere",0.,(3*2.54*cm), 0*degree, 360*degree, 0*degree, 180*degree);
-  G4LogicalVolume* emptySteelSphereLV= new G4LogicalVolume(emptySteelSphere, VacuumMat, "emptySteelSphereLV");
-  G4VisAttributes* vacuumsteel_vat=new G4VisAttributes(green);
-  vacuumsteel_vat->SetVisibility(true);
-  emptySteelSphereLV->SetVisAttributes(vacuumsteel_vat);
+// G4Sphere* emptySteelSphere=new G4Sphere("empty steel sphere",0.,(3*2.54*cm), 0*degree, 360*degree, 0*degree, 180*degree);
+//  G4LogicalVolume* emptySteelSphereLV= new G4LogicalVolume(emptySteelSphere, VacuumMat, "emptySteelSphereLV");
+//  G4VisAttributes* vacuumsteel_vat=new G4VisAttributes(green);
+ // vacuumsteel_vat->SetVisibility(true);
+ // emptySteelSphereLV->SetVisAttributes(vacuumsteel_vat);
 
 
 
@@ -383,7 +431,7 @@ G4double CopperPlatePosZ=0.675/2.0*mm+CopperPlateZ/2.0;
 
 
  G4PVPlacement* extSteelBoxPV = new G4PVPlacement(0, G4ThreeVector(0.,0.,posSteelBoxZ), "extSteelBoxPV", extSteelBoxLV, LabPV, false, true);	
- G4PVPlacement* emptySteelSpherePV= new G4PVPlacement(0, G4ThreeVector(0*cm, 0., 0*cm), "emptySteelSpherePV", emptySteelSphereLV, extSteelBoxPV, false, true);   
+ //G4PVPlacement* emptySteelSpherePV= new G4PVPlacement(0, G4ThreeVector(0*cm, 0., 0*cm), "emptySteelSpherePV", emptySteelSphereLV, extSteelBoxPV, false, true);   
 
 
 
@@ -393,6 +441,13 @@ G4double CopperPlatePosZ=0.675/2.0*mm+CopperPlateZ/2.0;
 
  G4PVPlacement* flangebackPV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange3),"flangebackPV",flangebackLV,LabPV, false, true);
 
+ G4PVPlacement* flangetopPV=new G4PVPlacement(rm2,G4ThreeVector(OutSteelBoxX/2.0+thick_flange/2.0,0.,posSteelBoxZ),"flangetopPV",flangetopLV,LabPV, false, true);
+
+ G4PVPlacement* flangebottomPV=new G4PVPlacement(rm2,G4ThreeVector(-OutSteelBoxX/2.0-thick_flange/2.0,0.,posSteelBoxZ),"flangebottomPV",flangebottomLV,LabPV, false, true);
+
+ G4PVPlacement* flangerightPV=new G4PVPlacement(rm1,G4ThreeVector(0.,OutSteelBoxY/2.0+thick_flange+sideThick,posSteelBoxZ),"flangerightPV",flangerightLV,LabPV, false, true);
+
+ G4PVPlacement* flangeleftPV=new G4PVPlacement(rm1,G4ThreeVector(0.,-OutSteelBoxY/2.0-thick_flange-sideThick,posSteelBoxZ),"flangeleftPV",flangeleftLV,LabPV, false, true);
 
 // G4PVPlacement* flangeback2PV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange4),"flangeback2PV",flangeback2LV,LabPV, false, true);
 
@@ -401,7 +456,7 @@ G4double CopperPlatePosZ=0.675/2.0*mm+CopperPlateZ/2.0;
 G4PVPlacement* extBonnerSpherePV= new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),"extBonnerSpherePV",extBonnerSphereLV,emptyLeadBoxPV, false, true);
 
 
-G4PVPlacement* polyTablePV=new G4PVPlacement(0, G4ThreeVector(-1*OutSteelBoxX/2.-tableX/2.,0.,posTableZ),"polyTablePV",polyTableLV,LabPV,false,true);
+G4PVPlacement* polyTablePV=new G4PVPlacement(0, G4ThreeVector(-1*OutSteelBoxX/2. - thick_flange -tableX/2.,0.,posTableZ),"polyTablePV",polyTableLV,LabPV,false,true);
 
 G4PVPlacement* woodTablePV= new G4PVPlacement(0, G4ThreeVector(0.,0.,0.),"woodTablePV",woodTableLV,polyTablePV,false,true);
 
@@ -414,9 +469,9 @@ G4PVPlacement* cartSteelBoxPV= new G4PVPlacement(0, G4ThreeVector(SteelCartPosX,
   G4LogicalVolume* CCDLV = GetConstructionCCDSensor44();
   
 
-   G4PVPlacement* CCDPV = new G4PVPlacement(0, G4ThreeVector(0,0,0), CCDLV, "CCDPV", emptySteelSphereLV, false, 0, false);
+   G4PVPlacement* CCDPV = new G4PVPlacement(0, G4ThreeVector(0,0,posSteelBoxZ), CCDLV, "CCDPV", LabLV, false, 0, false);
   
-   G4PVPlacement* copperPlatePV= new G4PVPlacement(0,G4ThreeVector(0,0,CopperPlatePosZ),"copperPlatePV",copperPlateLV,emptySteelSpherePV,false,true); 
+   G4PVPlacement* copperPlatePV= new G4PVPlacement(0,G4ThreeVector(0,0,CopperPlatePosZ+posSteelBoxZ),"copperPlatePV",copperPlateLV,LabPV,false,true); 
 
   return WorldPV;
 

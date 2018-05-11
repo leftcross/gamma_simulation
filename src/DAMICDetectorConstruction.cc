@@ -255,28 +255,28 @@ G4VPhysicalVolume* DAMICDetectorConstruction::Construct() {
   
   G4double rad_flange=3*2.54*cm;
   G4double rad_inner_flange=1.5*2.54*cm;
-  G4double thick_flange=1*cm;
+  G4double thick_flange=2*cm;
 
 
  G4VSolid* cylinder1=new G4Tubs("cylinder1",rad_inner_flange,rad_flange,thick_flange/2.0,0.,360*degree);
  G4VSolid* cylinder2=new G4Tubs("cylinder2",0.,rad_flange,thick_flange/2.0,0.,360*degree);
   
  
- G4LogicalVolume* flangefront1LV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangefront1LV");
+ //G4LogicalVolume* flangefront1LV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangefront1LV");
 
- G4LogicalVolume* flangeback1LV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangeback1LV");
+// G4LogicalVolume* flangeback1LV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangeback1LV");
 
- G4LogicalVolume* flangefront2LV=new G4LogicalVolume(cylinder2,StainSteelMat,"flangefront2LV");
+ G4LogicalVolume* flangefrontLV=new G4LogicalVolume(cylinder2,StainSteelMat,"flangefrontLV");
 
- G4LogicalVolume* flangeback2LV=new G4LogicalVolume(cylinder2,StainSteelMat,"flangeback2LV");
+ G4LogicalVolume* flangebackLV=new G4LogicalVolume(cylinder2,StainSteelMat,"flangebackLV");
 
  G4VisAttributes* steelflange_vat=new G4VisAttributes(green);
  steelflange_vat->SetVisibility(true);
- flangefront1LV->SetVisAttributes(steelflange_vat);
- flangefront2LV->SetVisAttributes(steelflange_vat);
+// flangefront1LV->SetVisAttributes(steelflange_vat);
+ flangefrontLV->SetVisAttributes(steelflange_vat);
 
- flangeback1LV->SetVisAttributes(steelflange_vat);
- flangeback2LV->SetVisAttributes(steelflange_vat);
+// flangeback1LV->SetVisAttributes(steelflange_vat);
+ flangebackLV->SetVisAttributes(steelflange_vat);
 
 
 
@@ -348,8 +348,8 @@ cartSteelBoxLV->SetVisAttributes(steelflange_vat);
 //-----------------Copper mount--------------//
 // For simplicity we just keep a copper plate behind the CCD
 
-G4double CopperPlateX=116*mm;
-G4double CopperPlateY=116*mm;
+G4double CopperPlateX=90*mm;
+G4double CopperPlateY=90*mm;
 G4double CopperPlateZ=0.79*2.54*mm;
 
 G4Box* copperPlate=new G4Box("copper bar",CopperPlateX/2.0,CopperPlateY/2.0,CopperPlateZ/2.0);
@@ -387,14 +387,14 @@ G4double CopperPlatePosZ=0.675/2.0*mm+CopperPlateZ/2.0;
 
 
 
- G4PVPlacement* flangefront1PV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange1),"flangefront1PV",flangefront1LV,LabPV, false, true);
+ G4PVPlacement* flangefrontPV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange1),"flangefrontPV",flangefrontLV,LabPV, false, true);
 
- G4PVPlacement* flangefront2PV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange2),"flangefront2PV",flangefront2LV,LabPV, false, true);
+// G4PVPlacement* flangefront2PV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange2),"flangefront2PV",flangefront2LV,LabPV, false, true);
 
- G4PVPlacement* flangeback1PV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange3),"flangeback1PV",flangeback1LV,LabPV, false, true);
+ G4PVPlacement* flangebackPV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange3),"flangebackPV",flangebackLV,LabPV, false, true);
 
 
- G4PVPlacement* flangeback2PV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange4),"flangeback2PV",flangeback2LV,LabPV, false, true);
+// G4PVPlacement* flangeback2PV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange4),"flangeback2PV",flangeback2LV,LabPV, false, true);
 
 
 

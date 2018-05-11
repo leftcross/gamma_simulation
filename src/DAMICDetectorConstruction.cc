@@ -176,7 +176,7 @@ G4VPhysicalVolume* DAMICDetectorConstruction::Construct() {
   G4double labHeight = worldHeight - 2.*wallThick; //Z
 
   G4Box* LabBox = new G4Box("Lab_Box", 0.5*labWidth, 0.5*labLength, 0.5*labHeight);
-  LabLV = new G4LogicalVolume(LabBox, LabMat, "LabLV");
+  LabLV = new G4LogicalVolume(LabBox, VacuumMat, "LabLV"); // VacuumMat instead of LabMat
 
   G4VisAttributes* lab_vat= new G4VisAttributes(gray);
   //  lab_log->SetVisAttributes(G4VisAttributes::GetInvisible());

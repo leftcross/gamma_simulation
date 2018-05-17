@@ -167,6 +167,11 @@ void DAMICRunAction::Book()
 //    man->CreateNtupleDColumn("partTheta");   // 30, particle theta 
 //    man->CreateNtupleDColumn("partPhi");     // 31, particle phi
     man->CreateNtupleSColumn("prodVolume");
+    man->CreateNtupleDColumn("prodX");
+    man->CreateNtupleDColumn("prodY");
+    man->CreateNtupleDColumn("prodZ");
+    man->CreateNtupleIColumn("isEntering");
+
     man->FinishNtuple();
 
   // ---- tertiary ntuple ------   

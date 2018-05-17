@@ -112,6 +112,10 @@ void DAMICSteppingAction::UserSteppingAction(const G4Step* fStep)
 // G4cout<<" Vol no "<<fStep->GetTrack()->GetOriginTouchable()->GetVolume()->GetName();
 // G4cout<<" Event id "<<event_id<<" Track id "<<fStep->GetTrack()->GetTrackID()<<" Posz "<<fStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetName() <<std::endl;
   G4String prodVol=fStep->GetTrack()->GetOriginTouchable()->GetVolume()->GetName(); 
+  double prodX=fStep->GetTrack()->GetVertexPosition().getX();
+  double prodY=fStep->GetTrack()->GetVertexPosition().getY();
+  double prodZ=fStep->GetTrack()->GetVertexPosition().getZ();
+
 
   G4int stepNsec = 0;
   if (fStep->GetSecondary()!=0)
@@ -195,9 +199,12 @@ void DAMICSteppingAction::UserSteppingAction(const G4Step* fStep)
 		}
 	}
 
+ G4int isEntering=1;
+ if( Volume == "CCDSensor")
+ isEntering=0;
 //if(  (Volume == "extBonnerSphereLV") && ((NextVolume == "emptyLeadBoxPV")||(NextVolume =="extLeadBoxPV")) ) {
 //  G4cout<<"Next volume is "<<NextVolume<<" Current "<<Volume<<std::endl;
-  if( Volume == "CCDSensor") {  
+  if(( Volume == "CCDSensor")||(NextVolume=="CCDPV")) {  
    // if(StoreNeutron==1) {  
     G4AnalysisManager* man = G4AnalysisManager::Instance();
     man->FillNtupleIColumn(0,0,event_id);
@@ -232,8 +239,11 @@ void DAMICSteppingAction::UserSteppingAction(const G4Step* fStep)
     man->FillNtupleIColumn(0, 22, stepNsec); 
     man->FillNtupleIColumn(0, 23, motherId); //16
     man->FillNtupleSColumn(0,24,prodVol);
-    man->AddNtupleRow(0);
-
+    man->FillNtupleDColumn(0, 25, prodX/CLHEP::cm);
+    man->FillNtupleDColumn(0, 26, prodY/CLHEP::cm);
+    man->FillNtupleDColumn(0, 27, prodZ/CLHEP::cm);
+    man->FillNtupleIColumn(0, 28 , isEntering); 
+   man->AddNtupleRow(0);
     //fStep->GetTrack()->SetTrackStatus(fStopAndKill);
     //fStep->GetTrack()->SetTrackStatus(fKillTrackAndSecondaries);
 

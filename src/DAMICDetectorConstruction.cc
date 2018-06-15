@@ -293,39 +293,59 @@ G4VPhysicalVolume* DAMICDetectorConstruction::Construct() {
 // Flange
   
   G4double rad_flange=3*2.54*cm;
-  G4double rad_inner_flange=1.5*2.54*cm;
-  G4double thick_flange=2*cm;
-
-
- G4VSolid* cylinder1=new G4Tubs("cylinder1",0.,rad_flange,thick_flange,0.,360*degree); // bigger flange on sides
-
- G4VSolid* cylinder2=new G4Tubs("cylinder2",0.,rad_flange,thick_flange/2.0,0.,360*degree);
+  G4double rad_inner_flange=2*2.54*cm;
+  G4double thick_flange1=0.1*2.54*cm;
+  G4double thick_flange2=4*cm;
+  G4double thick_hollow_flange=0.73*2.54*cm;
+  G4double thick_flange3=0.83*2.54*cm;
   
+//  G4double =1.9*cm;
+
+
+ G4VSolid* cylinder1=new G4Tubs("cylinder1",0.,rad_flange,thick_flange2/2.0,0.,360*degree); // bigger flange on sides
+
+ G4VSolid* cylinder2=new G4Tubs("cylinder2",0.,rad_flange,thick_flange1/2.0,0.,360*degree);
+  
+ G4VSolid* cylinder3=new G4Tubs("cylinder3",rad_inner_flange,rad_flange,thick_hollow_flange/2.0,0.,360*degree);
+
+G4VSolid* cylinder4=new G4Tubs("cylinder1",0.,rad_flange,thick_flange3/2.0,0.,360*degree);
  
+
  G4LogicalVolume* flangeleftLV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangeleftLV");
 
  G4LogicalVolume* flangerightLV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangerightLV");
 
 // G4LogicalVolume* flangeback1LV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangeback1LV");
 
- G4LogicalVolume* flangefrontLV=new G4LogicalVolume(cylinder2,StainSteelMat,"flangefrontLV");
+ G4LogicalVolume* flangefrontLV=new G4LogicalVolume(cylinder2,AluminiumMat,"flangefrontLV");
 
- G4LogicalVolume* flangebackLV=new G4LogicalVolume(cylinder2,StainSteelMat,"flangebackLV");
+ G4LogicalVolume* flangefronthollowLV=new G4LogicalVolume(cylinder3,AluminiumMat,"flangefronthollowLV");
 
- G4LogicalVolume* flangetopLV=new G4LogicalVolume(cylinder2,StainSteelMat,"flangetopLV");
+ G4LogicalVolume* flangebackLV=new G4LogicalVolume(cylinder2,AluminiumMat,"flangebackLV");
 
- G4LogicalVolume* flangebottomLV=new G4LogicalVolume(cylinder2,StainSteelMat,"flangebottomLV");
+ G4LogicalVolume* flangebackhollowLV=new G4LogicalVolume(cylinder3,AluminiumMat,"flangebackhollowLV");
+
+
+ 
+ G4LogicalVolume* flangetopLV=new G4LogicalVolume(cylinder4,StainSteelMat,"flangetopLV");
+
+ G4LogicalVolume* flangebottomLV=new G4LogicalVolume(cylinder4,StainSteelMat,"flangebottomLV");
 
 
  G4VisAttributes* steelflange_vat=new G4VisAttributes(green);
  steelflange_vat->SetVisibility(true);
  flangerightLV->SetVisAttributes(steelflange_vat);
- flangefrontLV->SetVisAttributes(steelflange_vat);
  flangetopLV->SetVisAttributes(steelflange_vat);
- flangebottomLV->SetVisAttributes(steelflange_vat);
  flangeleftLV->SetVisAttributes(steelflange_vat);
  flangebackLV->SetVisAttributes(steelflange_vat);
+ 
+ G4VisAttributes* aluminum_vat=new G4VisAttributes(blue);
+ aluminum_vat->SetVisibility(true);
 
+ flangefrontLV->SetVisAttributes(aluminum_vat);
+ flangebackLV->SetVisAttributes(aluminum_vat);
+ flangefronthollowLV->SetVisAttributes(aluminum_vat);
+ flangebackhollowLV->SetVisAttributes(aluminum_vat);
 
 
 //-------------------  empty sphere ---------------------//  
@@ -411,14 +431,14 @@ G4double CopperPlatePosZ=0.675/2.0*mm+CopperPlateZ/2.0;
 
 //----------------- Volume placement ------------- // 
 
- G4double posSteelBoxZ=distance_chamber+OutLeadBoxZ/2.0+2*thick_flange+OutSteelBoxZ/2.0;
+ G4double posSteelBoxZ=distance_chamber+OutLeadBoxZ/2.0+thick_flange1+thick_hollow_flange+OutSteelBoxZ/2.0;
  G4double posTableZ=distance_chamber+OutLeadBoxZ/2.0+tableZ/2.0; 
 
- G4double distance_flange1=posSteelBoxZ - OutSteelBoxZ/2.0 - thick_flange/2.; 
- G4double distance_flange2=distance_flange1-thick_flange;
+ G4double distance_flange1=posSteelBoxZ - OutSteelBoxZ/2.0 - thick_hollow_flange/2.0; 
+ G4double distance_flange2=distance_flange1-thick_hollow_flange/2.0-thick_flange1/2.0;
 
- G4double distance_flange3=posSteelBoxZ + OutSteelBoxZ/2.0 + thick_flange/2.; 
- G4double distance_flange4=distance_flange3+ thick_flange;
+ G4double distance_flange3=posSteelBoxZ + OutSteelBoxZ/2.0 + thick_hollow_flange/2.0; 
+ G4double distance_flange4=distance_flange3+ thick_hollow_flange/2.0+ thick_flange1/2.0;
 
 
 
@@ -435,19 +455,23 @@ G4double CopperPlatePosZ=0.675/2.0*mm+CopperPlateZ/2.0;
 
 
 
- G4PVPlacement* flangefrontPV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange1),"flangefrontPV",flangefrontLV,LabPV, false, true);
+ G4PVPlacement* flangefrontPV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange2),"flangefrontPV",flangefrontLV,LabPV, false, true);
+
+ G4PVPlacement* flangefronthollowPV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange1),"flangefronthollowPV",flangefronthollowLV,LabPV, false, true);
 
 // G4PVPlacement* flangefront2PV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange2),"flangefront2PV",flangefront2LV,LabPV, false, true);
 
- G4PVPlacement* flangebackPV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange3),"flangebackPV",flangebackLV,LabPV, false, true);
+ G4PVPlacement* flangebackPV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange4),"flangebackPV",flangebackLV,LabPV, false, true);
 
- G4PVPlacement* flangetopPV=new G4PVPlacement(rm2,G4ThreeVector(OutSteelBoxX/2.0+thick_flange/2.0,0.,posSteelBoxZ),"flangetopPV",flangetopLV,LabPV, false, true);
+G4PVPlacement* flangebackhollowPV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange3),"flangebackhollowPV",flangebackhollowLV,LabPV, false, true);
 
- G4PVPlacement* flangebottomPV=new G4PVPlacement(rm2,G4ThreeVector(-OutSteelBoxX/2.0-thick_flange/2.0,0.,posSteelBoxZ),"flangebottomPV",flangebottomLV,LabPV, false, true);
+ G4PVPlacement* flangetopPV=new G4PVPlacement(rm2,G4ThreeVector(OutSteelBoxX/2.0+thick_flange3/2.0,0.,posSteelBoxZ),"flangetopPV",flangetopLV,LabPV, false, true);
 
- G4PVPlacement* flangerightPV=new G4PVPlacement(rm1,G4ThreeVector(0.,OutSteelBoxY/2.0+thick_flange+sideThick,posSteelBoxZ),"flangerightPV",flangerightLV,LabPV, false, true);
+ G4PVPlacement* flangebottomPV=new G4PVPlacement(rm2,G4ThreeVector(-OutSteelBoxX/2.0-thick_flange3/2.0,0.,posSteelBoxZ),"flangebottomPV",flangebottomLV,LabPV, false, true);
 
- G4PVPlacement* flangeleftPV=new G4PVPlacement(rm1,G4ThreeVector(0.,-OutSteelBoxY/2.0-thick_flange-sideThick,posSteelBoxZ),"flangeleftPV",flangeleftLV,LabPV, false, true);
+ G4PVPlacement* flangerightPV=new G4PVPlacement(rm1,G4ThreeVector(0.,OutSteelBoxY/2.0+thick_flange2/2.0+sideThick,posSteelBoxZ),"flangerightPV",flangerightLV,LabPV, false, true);
+
+ G4PVPlacement* flangeleftPV=new G4PVPlacement(rm1,G4ThreeVector(0.,-OutSteelBoxY/2.0-thick_flange2/2.0-sideThick,posSteelBoxZ),"flangeleftPV",flangeleftLV,LabPV, false, true);
 
 // G4PVPlacement* flangeback2PV=new G4PVPlacement(0,G4ThreeVector(0.*cm,0.,distance_flange4),"flangeback2PV",flangeback2LV,LabPV, false, true);
 
@@ -456,7 +480,7 @@ G4double CopperPlatePosZ=0.675/2.0*mm+CopperPlateZ/2.0;
 G4PVPlacement* extBonnerSpherePV= new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),"extBonnerSpherePV",extBonnerSphereLV,emptyLeadBoxPV, false, true);
 
 
-G4PVPlacement* polyTablePV=new G4PVPlacement(0, G4ThreeVector(-1*OutSteelBoxX/2. - thick_flange -tableX/2.,0.,posTableZ),"polyTablePV",polyTableLV,LabPV,false,true);
+G4PVPlacement* polyTablePV=new G4PVPlacement(0, G4ThreeVector(-1*OutSteelBoxX/2. - thick_flange3 -tableX/2.,0.,posTableZ),"polyTablePV",polyTableLV,LabPV,false,true);
 
 G4PVPlacement* woodTablePV= new G4PVPlacement(0, G4ThreeVector(0.,0.,0.),"woodTablePV",woodTableLV,polyTablePV,false,true);
 

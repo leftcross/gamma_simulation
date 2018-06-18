@@ -308,7 +308,7 @@ G4VPhysicalVolume* DAMICDetectorConstruction::Construct() {
   
  G4VSolid* cylinder3=new G4Tubs("cylinder3",rad_inner_flange,rad_flange,thick_hollow_flange/2.0,0.,360*degree);
 
-G4VSolid* cylinder4=new G4Tubs("cylinder1",0.,rad_flange,thick_flange3/2.0,0.,360*degree);
+G4VSolid* cylinder4=new G4Tubs("cylinder4",0.,rad_flange,thick_flange3/2.0,0.,360*degree);
  
 
  G4LogicalVolume* flangeleftLV=new G4LogicalVolume(cylinder1,StainSteelMat,"flangeleftLV");
